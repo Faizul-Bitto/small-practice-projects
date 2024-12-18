@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/milligram.css" />
+  </head>
+  <body>
+    <div id="loader" class="loading d-none"></div>
+
+    <div class="container">
+      <div class="row">
+        <a href="./create.html" class="button button-outline float-left">
+          Create New
+        </a>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <table>
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Product Code</th>
+              <th>Product Unit Price</th>
+              <th>Product Quantity</th>
+              <th>Product Total Price</th>
+              <th>Delete</th>
+              <th>Update</th>
+            </tr>
+          </thead>
+          <tbody id="itemList"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="./js/axios.min.js"></script>
+
+    <script>
+      // data read
+      async function getList() {
+        const URL = "https://crud.teamrabbil.com/api/v1/ReadProduct";
+        const res = await axios.get(URL);
+        const data = res.data["data"];
+        data.forEach((item) => {
+          document.getElementById("itemList").innerHTML += `
+                <tr>
+                    <td>${item["ProductName"]}</td>
+                    <td>${item["ProductCode"]}</td>
+                    <td>${item["UnitPrice"]}</td>
+                    <td>${item["Qty"]}</td>
+                    <td>${item["TotalPrice"]}</td>
+                    <td><button onclick="deleteItem('${item["_id"]}')">Delete</button></td>
+                    <td><button onclick="goUpdatePage('${item["_id"]}')">Update</button></td>
+                <tr>
+            `;
+        });
+      }
+
+      getList();
+
+      // data delete
+      async function deleteItem(id) {
+        const URL = `https://crud.teamrabbil.com/api/v1/DeleteProduct/${id}`;
+        const response = await axios.get(URL);
+        document.getElementById("itemList").innerHTML = "";
+        await getList();
+      }
+
+      // go update page
+      function goUpdatePage(id) {
+        window.location = `./update.html?id=${id}`;
+      }
+    </script>
+  </body>
+</html>
